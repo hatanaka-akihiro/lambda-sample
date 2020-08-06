@@ -35,9 +35,11 @@ resource "aws_lambda_function" "myKintoneFunction" {
 
   environment {
     variables = {
-      "domain" = var.kintone_domain
-      "token"  = var.kintone_api_token
-      "appId"  = var.kintone_app_id
+      "domain"  = var.kintone_domain
+      "token"   = var.kintone_api_token
+      "appId"   = var.kintone_app_id
+      "value"   = var.kintone_app_value_field
+      "display" = var.kintone_app_display_field
     }
   }
 }

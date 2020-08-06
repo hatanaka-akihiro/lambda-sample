@@ -36,6 +36,16 @@ variable "kintone_app_id" {
   description = "App ID of kintone application."
 }
 
+variable "kintone_app_value_field" {
+  type        = string
+  description = "Value field code of kintone application."
+}
+
+variable "kintone_app_display_field" {
+  type        = string
+  description = "Display field code of kintone application."
+}
+
 variable "api_name" {
   type        = string
   description = "Name of API."

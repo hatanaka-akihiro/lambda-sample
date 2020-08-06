@@ -5,7 +5,9 @@ const builder = require('xmlbuilder');
 const DOMAIN = process.env['domain'];
 const TOKEN = process.env['token'];
 const APP_ID = process.env['appId'];
-const FIELDS = ['value', 'display'];
+const VALUE_FIELD = process.env['value'];
+const DISPLAY_FIELD = process.env['display'];
+const FIELDS = [VALUE_FIELD, DISPLAY_FIELD];
 
 const client = new KintoneRestAPIClient({
     baseUrl: `https://${DOMAIN}`,
@@ -40,11 +42,11 @@ function buildQuery (event) {
   let conditions = new Array();
   if (event.queryStringParameters && event.queryStringParameters.query) {
     const query = event.queryStringParameters.query;
-    conditions.push(`display like "${validator.escape(query)}"`);
+    conditions.push(`${DISPLAY_FIELD} like "${validator.escape(query)}"`);
   }
   if (event.queryStringParameters && event.queryStringParameters.parent) {
     const parentItemId = event.queryStringParameters.parent;
-    conditions.push(`value like "${validator.escape(parentItemId)}"`); // kintone の仕様で前方一致検索不可
+    conditions.push(`${VALUE_FIELD} like "${validator.escape(parentItemId)}"`); // kintone の仕様で前方一致検索不可
   }
   let stmt = '';
   const condNum = conditions.length;
@@ -56,7 +58,7 @@ function buildQuery (event) {
   } else if (event.multiValueQueryStringParameters && event.multiValueQueryStringParameters.values) {
     const values = event.multiValueQueryStringParameters.values;
     const valuesStr = new Array(values.length).fill().map((_, i) => validator.escape(values[i])).join('", "');
-    stmt += `value in ("${valuesStr}")`;
+    stmt += `${VALUE_FIELD} in ("${valuesStr}")`;
   }
   return stmt;
 }
@@ -65,8 +67,8 @@ function buildXml (res) {
   let root = builder.create('items');
   for (let i = 0; i < res.length; i++) {
     let item = root.ele('item');
-    item.att('value', res[i].value.value);
-    item.att('display', res[i].display.value);
+    item.att('value', res[i][VALUE_FIELD].value);
+    item.att('display', res[i][DISPLAY_FIELD].value);
   }
   const xml = root.end({ pretty: true});
   return xml;
