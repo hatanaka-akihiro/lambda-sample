@@ -23,7 +23,7 @@ variable "lambda_role_name" {
 
 variable "kintone_domain" {
   type        = string
-  description = "Your domain name of kintone such as: xxxxx.cybozu.com"
+  description = "Your domain name of kintone such as: xxxxx.kintone or xxxxx.cybozu.com"
 }
 
 variable "kintone_api_token" {
