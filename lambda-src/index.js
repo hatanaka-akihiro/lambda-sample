@@ -90,7 +90,7 @@ function formatError (error) {
   const response = {
     "statusCode": error.statusCode,
     "headers": {
-      "Content-Type": "text/plain",
+      "Content-Type": "text/plain; charset=utf-8",
       "x-amzn-ErrorType": error.code
     },
     "isBase64Encoded": false,
