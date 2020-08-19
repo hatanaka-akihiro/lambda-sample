@@ -18,6 +18,15 @@ resource "aws_iam_role" "myKintoneFunction-role" {
   path                  = "/service-role/"
 }
 
+data "aws_iam_policy" "AWSLambdaBasicExecutionRole" {
+  arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+}
+
+resource "aws_iam_role_policy_attachment" "lambda-basic-attach" {
+  policy_arn = data.aws_iam_policy.AWSLambdaBasicExecutionRole.arn
+  role       = aws_iam_role.myKintoneFunction-role.name
+}
+
 data "archive_file" "lambda-src-zip" {
   type        = "zip"
   source_dir  = "lambda-src"
