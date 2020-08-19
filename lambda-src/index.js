@@ -1,5 +1,4 @@
 const { KintoneRestAPIClient } = require('@kintone/rest-api-client');
-const validator = require('validator');
 const builder = require('xmlbuilder');
 
 const DOMAIN = process.env['domain'];
@@ -18,47 +17,40 @@ const client = new KintoneRestAPIClient({
  
 exports.handler = async (event) => {
   const query = buildQuery(event);
+  console.log(`query: ${query}`);
   const params = {
     app: APP_ID,
     fields: FIELDS,
     condition: query
   };
-  let response = {};
   console.log("Starting query ...");
   try {
     const res = await client.record.getAllRecords(params);
     const xml = buildXml(res);
-    response = formatResponse(xml);
+    return formatResponse(xml);
   } catch (e) {
     console.log(e);
-    response = formatError(e);
-  } finally {
-    return response;
+    return formatError(e);
   }
- 
 };
  
 function buildQuery (event) {
   let conditions = new Array();
   if (event.queryStringParameters && event.queryStringParameters.query) {
     const query = event.queryStringParameters.query;
-    conditions.push(`${DISPLAY_FIELD} like "${validator.escape(query)}"`);
+    conditions.push(`${DISPLAY_FIELD} like ${JSON.stringify(query)}`);
   }
   if (event.queryStringParameters && event.queryStringParameters.parent) {
     const parentItemId = event.queryStringParameters.parent;
-    conditions.push(`${VALUE_FIELD} like "${validator.escape(parentItemId)}"`); // kintone の仕様で前方一致検索不可
+    conditions.push(`${VALUE_FIELD} like ${JSON.stringify(parentItemId)}`); // kintone の仕様で前方一致検索不可
   }
   let stmt = '';
-  const condNum = conditions.length;
-  if (condNum >= 1) {
-    stmt += `${conditions[0]}`;
-    if (condNum == 2) {
-      stmt += ` and ${conditions[1]}`;
-    }
+  if ( conditions.length > 0) {
+    stmt += conditions.join(" and ");
   } else if (event.multiValueQueryStringParameters && event.multiValueQueryStringParameters.values) {
     const values = event.multiValueQueryStringParameters.values;
-    const valuesStr = new Array(values.length).fill().map((_, i) => validator.escape(values[i])).join('", "');
-    stmt += `${VALUE_FIELD} in ("${valuesStr}")`;
+    const valuesStr = values.map(v => JSON.stringify(v)).join(', ');
+    stmt += `${VALUE_FIELD} in (${valuesStr})`;
   }
   return stmt;
 }
@@ -78,7 +70,7 @@ function formatResponse (body) {
   const response = {
     "statusCode": 200,
     "headers": {
-      "Content-Type": "text/plain; charset=utf-8"
+      "Content-Type": "application/xml; charset=utf-8"
     },
     "isBase64Encoded": false,
     "body": body,
