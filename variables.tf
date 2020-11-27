@@ -29,3 +29,21 @@ variable "lambda_role_name" {
   description = "Name of IAM role for Lambda function."
   default     = "myLambdaFunction-role"
 }
+
+variable "api_name" {
+  type        = string
+  description = "Name of API."
+  default     = "myLambdaFunction-API"
+}
+
+variable "api_path" {
+  type        = string
+  description = "Path to the API."
+  default     = "myLambdaFunction"
+}
+
+variable "api_stage" {
+  type        = string
+  description = "Name of the stage to deploy the API."
+  default     = "default"
+}
