@@ -49,6 +49,6 @@ variable "api_stage" {
 }
 
 variable "environment" {
-  type = "map"
+  type = map
   default = {}
 }
