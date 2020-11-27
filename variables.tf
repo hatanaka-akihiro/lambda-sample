@@ -50,5 +50,7 @@ variable "api_stage" {
 
 variable "environment" {
   type = map
-  default = {}
+  default = {
+    sample = "hogehoge"
+  }
 }
