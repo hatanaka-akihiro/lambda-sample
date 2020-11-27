@@ -43,8 +43,7 @@ resource "aws_lambda_function" "myLambdaFunction" {
   filename         = data.archive_file.lambda-src-zip.output_path
 
   environment {
-    variables = {
-    }
+    variables = var.environment
   }
 }
 

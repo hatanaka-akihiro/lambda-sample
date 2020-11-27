@@ -47,3 +47,8 @@ variable "api_stage" {
   description = "Name of the stage to deploy the API."
   default     = "default"
 }
+
+variable "environment" {
+  type = "map"
+  default = {}
+}
